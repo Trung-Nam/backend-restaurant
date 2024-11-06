@@ -5,6 +5,7 @@ const port = process.env.PORT || 6001;
 const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 
 // middleware
@@ -34,12 +35,27 @@ app.post('/jwt', async (req, res) => {
 const menuRoutes = require('./api/routes/menuRoutes');
 const cartRoutes = require('./api/routes/cartRoutes');
 const userRoutes = require('./api/routes/userRoutes')
-
-app.use('/menu', menuRoutes)
+const paymentRoutes = require('./api/routes/paymentRoutes')
+app.use('/menu', menuRoutes);
 app.use('/carts', cartRoutes);
 app.use('/users', userRoutes);
+app.use('/payments', paymentRoutes);
 
+app.post("/create-payment-intent", async (req, res) => {
+  const { price } = req.body;
+  const amount = price * 100;
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: "usd",
 
+    payment_method_types: ["card"],
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 
 app.get("/", (req, res) => {
   res.send("Hello Food Restaurant Client Server!");
