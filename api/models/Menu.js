@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
-// create schema object for Menu Items
+// Create schema object for Menu Items
 const menuSchema = new Schema({
     name: {
         type: String,
@@ -9,17 +9,48 @@ const menuSchema = new Schema({
         required: true,
         minlength: 3
     },
-    recipe: String,
-    image: String, 
-    category: String,
-    price: Number,
+    description: {
+        type: String,
+        default: ""
+    },
+    image: {
+        type: String,
+        default: ""
+    },
+    category: {
+        type: String,
+        default: ""
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    ingredients: [
+        {
+            ingredientName: {
+                type: String,
+                required: true
+            },
+            ingredientImage: {
+                type: String,
+                default: ""
+            }
+        }
+    ],
+    instructions: [
+        {
+            description: {
+                type: String,
+                required: true
+            }
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now
     }
+});
 
-})
-
-// create model
+// Create model
 const Menu = mongoose.model("Menu", menuSchema);
 module.exports = Menu;
