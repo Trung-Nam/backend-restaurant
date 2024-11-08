@@ -53,20 +53,32 @@ const singleMenuItem = async (req, res) => {
 };
 
 // update single menu item
+// update single menu item
 const updateMenuItem = async (req, res) => {
     const menuId = req.params.id;
-    const { name, recipe, image, category, price } = req.body;
+    const { name, description, recipe, image, category, price, ingredients, instructions } = req.body;
+
     try {
-        const updatedMenu = await Menu.findByIdAndUpdate(menuId,
-            { name, recipe, image, category, price },
-            { new: true, runValidator: true }
+        const updatedMenu = await Menu.findByIdAndUpdate(
+            menuId,
+            {
+                name,
+                description,
+                recipe,
+                image,
+                category,
+                price,
+                ingredients,       // Array of ingredient objects { ingredientName, ingredientImage }
+                instructions       // Array of instruction objects { description }
+            },
+            { new: true, runValidators: true }
         );
 
         if (!updatedMenu) {
-            return res.status(404).json({ message: "Menu not found" })
+            return res.status(404).json({ message: "Menu not found" });
         }
 
-        res.status(200).json(updatedMenu)
+        res.status(200).json(updatedMenu);
 
     } catch (error) {
         res.status(500).json({ message: error.message });
