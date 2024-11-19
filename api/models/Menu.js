@@ -18,8 +18,15 @@ const menuSchema = new Schema({
         default: ""
     },
     category: {
-        type: String,
-        default: ""
+        name: {
+            type: String,
+            default: ""
+        },
+        image:
+        {
+            type: String,
+            default: ""
+        }
     },
     price: {
         type: Number,
