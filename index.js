@@ -9,7 +9,20 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 
 // middleware
-app.use(cors());
+const whitelist = [
+  'http://localhost:5173', 
+  ''
+];
+app.use(cors({
+  origin: (origin, callback) => {
+      if (whitelist.includes(origin) || !origin) {
+          callback(null, true);
+      } else {
+          callback(new Error('Not allowed by CORS'));
+      }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // mongodb configuration using mongoose

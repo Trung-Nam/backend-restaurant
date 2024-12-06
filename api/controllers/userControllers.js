@@ -10,6 +10,20 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const getUserByEmail = async (req, res) => {
+  const email = req.params.email; 
+
+  try {
+    const user = await User.findOne({ email }); 
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // post a new user
 const createUser = async (req, res) => {
   const user = req.body;
@@ -20,12 +34,33 @@ const createUser = async (req, res) => {
       return res.status(409).json({ message: "User already exists!" });
     }
     const result = await User.create(user);
-    res.status(201).json(result); // Status 201 Created for new user
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+// update a user
+const updateUser = async (req, res) => {
+  const userId = req.params.id;
+  const updates = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+    res.status(200).json(updatedUser);
+    
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // delete a user
 const deleteUser = async (req, res) => {
@@ -66,7 +101,6 @@ const getAdmin = async (req, res) => {
 // make admin of a user
 const makeAdmin = async (req, res) => {
   const userId = req.params.id;
-  const { name, email, photoURL, role } = req.body;
   try {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -87,7 +121,9 @@ const makeAdmin = async (req, res) => {
 
 module.exports = {
   getAllUsers,
+  getUserByEmail,
   createUser,
+  updateUser,
   deleteUser,
   getAdmin,
   makeAdmin
