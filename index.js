@@ -11,7 +11,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // middleware
 const whitelist = [
   'http://localhost:5173', 
-  ''
+  'https://foodi-restaurant-website.netlify.app'
 ];
 app.use(cors({
   origin: (origin, callback) => {
